@@ -47,6 +47,13 @@ const CONFIG = {
             'https://raw.githubusercontent.com/ahmadtantowi/fifo-board-indicator/refs/heads/main/assets/diagram.png',
           link: 'https://github.com/ahmadtantowi/fifo-board-indicator',
         },
+        {
+          title: 'IoT Temperature and Humidity Monitoring System',
+          description:
+            'An IoT data platform to handle high-frequency sensor data, automated alerting, and third-party syncing.',
+          imageUrl: 'https://i.imgur.com/KSP5ywZ.png',
+          link: 'https://stg-api.nd-gateway.com/swagger/index.html',
+        },
       ],
     },
   },
