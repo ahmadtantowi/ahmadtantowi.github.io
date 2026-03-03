@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import LazyImage from '../lazy-image';
 import { MdOpenInNew } from 'react-icons/md';
 import { ga, skeleton } from '../../utils';
 import { SanitizedExternalProject } from '../../interfaces/sanitized-config';
@@ -19,43 +18,34 @@ const ExternalProjectCard = ({
     const array = [];
     for (let index = 0; index < externalProjects.length; index++) {
       array.push(
-        <div className="card shadow-md card-sm bg-base-100" key={index}>
-          <div className="p-8 h-full w-full">
-            <div className="flex items-center flex-col">
+        <div
+          className="card shadow-md card-sm bg-base-100 overflow-hidden"
+          key={index}
+        >
+          <div className="relative h-48 w-full">
+            <div className="absolute inset-0">
+              {skeleton({
+                widthCls: 'w-full',
+                heightCls: 'h-full',
+                shape: '',
+              })}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-base-900/70 to-transparent" />
+            <div className="absolute inset-0 p-4 flex flex-col justify-end">
               <div className="w-full">
-                <div className="flex items-start px-4">
-                  <div className="w-full">
-                    <h2>
-                      {skeleton({
-                        widthCls: 'w-32',
-                        heightCls: 'h-8',
-                        className: 'mb-2 mx-auto',
-                      })}
-                    </h2>
-                    <div className="avatar w-full h-full">
-                      <div className="w-24 h-24 mask mask-squircle mx-auto">
-                        {skeleton({
-                          widthCls: 'w-full',
-                          heightCls: 'h-full',
-                          shape: '',
-                        })}
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      {skeleton({
-                        widthCls: 'w-full',
-                        heightCls: 'h-4',
-                        className: 'mx-auto',
-                      })}
-                    </div>
-                    <div className="mt-2 flex items-center flex-wrap justify-center">
-                      {skeleton({
-                        widthCls: 'w-full',
-                        heightCls: 'h-4',
-                        className: 'mx-auto',
-                      })}
-                    </div>
-                  </div>
+                <h2 className="text-white text-lg">
+                  {skeleton({
+                    widthCls: 'w-32',
+                    heightCls: 'h-6',
+                    className: 'mb-2',
+                  })}
+                </h2>
+                <div className="text-white/80 text-sm">
+                  {skeleton({
+                    widthCls: 'w-full',
+                    heightCls: 'h-4',
+                    className: '',
+                  })}
                 </div>
               </div>
             </div>
@@ -63,65 +53,74 @@ const ExternalProjectCard = ({
         </div>,
       );
     }
-
     return array;
   };
 
+  const handleClick = (e: React.MouseEvent, item: SanitizedExternalProject) => {
+    e.preventDefault();
+    try {
+      if (googleAnalyticId) {
+        ga.event('Click External Project', {
+          post: item.title,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    window?.open(item.link, '_blank');
+  };
+
   const renderExternalProjects = () => {
-    return externalProjects.map((item, index) => (
-      <a
-        className="card shadow-md card-sm bg-base-100 cursor-pointer"
-        key={index}
-        href={item.link}
-        onClick={(e) => {
-          e.preventDefault();
-
-          try {
-            if (googleAnalyticId) {
-              ga.event('Click External Project', {
-                post: item.title,
-              });
-            }
-          } catch (error) {
-            console.error(error);
+    return externalProjects.map((item, index) => {
+      const hasImage = Boolean(item.imageUrl);
+      const backgroundStyle: React.CSSProperties = hasImage
+        ? {
+            backgroundImage: `url(${item.imageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
           }
+        : {};
 
-          window?.open(item.link, '_blank');
-        }}
-      >
-        <div className="p-8 h-full w-full">
-          <div className="flex items-center flex-col">
-            <div className="w-full">
-              <div className="px-4">
-                <div className="text-center w-full">
-                  <h2 className="font-medium text-center opacity-60 mb-2">
-                    {item.title}
-                  </h2>
-                  {item.imageUrl && (
-                    <div className="avatar opacity-90">
-                      <div className="w-24 h-24 mask mask-squircle">
-                        <LazyImage
-                          src={item.imageUrl}
-                          alt={'thumbnail'}
-                          placeholder={skeleton({
-                            widthCls: 'w-full',
-                            heightCls: 'h-full',
-                            shape: '',
-                          })}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <p className="mt-2 text-base-content text-sm text-justify">
-                    {item.description}
-                  </p>
+      return (
+        <a
+          className="card shadow-md card-sm bg-base-100 overflow-hidden cursor-pointer"
+          key={index}
+          href={item.link}
+          onClick={(e) => handleClick(e, item)}
+        >
+          <div className="relative h-48 w-full" style={backgroundStyle}>
+            {/* dark overlay to ensure text readability */}
+            <div className="absolute inset-0 bg-black/50" />
+            {/* soft gradient at bottom for better contrast */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {/* content */}
+            <div className="absolute inset-0 p-6 flex flex-col justify-end">
+              <div className="flex items-center justify-between">
+                <h2 className="text-white font-medium text-lg opacity-95">
+                  {item.title}
+                </h2>
+                <div className="flex items-center space-x-2">
+                  <MdOpenInNew className="text-white text-xl opacity-90" />
                 </div>
               </div>
+              <p className="mt-2 text-white/85 text-sm line-clamp-3">
+                {item.description}
+              </p>
             </div>
           </div>
-        </div>
-      </a>
-    ));
+          {/* If there's no image, provide a small body area to show meta (keeps cards consistent height) */}
+          {!hasImage && (
+            <div className="p-4">
+              <h3 className="font-medium text-base-content">{item.title}</h3>
+              <p className="mt-2 text-sm text-base-content/80 line-clamp-3">
+                {item.description}
+              </p>
+            </div>
+          )}
+        </a>
+      );
+    });
   };
 
   return (
@@ -156,6 +155,7 @@ const ExternalProjectCard = ({
                 </div>
               </div>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {loading ? renderSkeleton() : renderExternalProjects()}
             </div>
