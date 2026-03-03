@@ -52,7 +52,7 @@ const CONFIG = {
           description:
             'An IoT data platform to handle high-frequency sensor data, automated alerting, and third-party syncing.',
           imageUrl: 'https://i.imgur.com/KSP5ywZ.png',
-          link: 'https://stg-api.nd-gateway.com/swagger/index.html',
+          link: 'https://github.com/ahmadtantowi/portofolio/wiki/COEUS-Server',
         },
       ],
     },
